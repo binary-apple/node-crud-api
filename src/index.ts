@@ -53,4 +53,21 @@ server.on('request', (req, res) => {
     }
   }
 
+  if (method === 'DELETE' && url?.startsWith('/api/users/')) {
+    const reqUserId = url.slice(11);
+    const userIdInArray = users.findIndex((user) => user.id === reqUserId);
+    if (userIdInArray >= 0) {
+      res.statusCode = 204;
+      users.splice(userIdInArray, 1);
+      res.end();
+    } else {
+      if (!uuidValidate(reqUserId)) {
+        res.statusCode = 400;
+        res.end('Invalid user id');
+      } else {
+        res.statusCode = 404;
+        res.end('User not found');
+      }
+    }
+  }
 });

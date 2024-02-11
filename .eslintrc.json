@@ -10,7 +10,7 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
-    "quotes": ["error", "single"],
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
     "semi": ["error", "always"],
     "comma-spacing": ["error", { "before": false, "after": true }]
   }

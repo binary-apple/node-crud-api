@@ -1,7 +1,7 @@
 import http from 'http';
 import dotenv from 'dotenv';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
-import { User, UserData/* , validateUserData */ } from 'types';
+import { User /*, UserData  , validateUserData */ } from 'types';
 
 dotenv.config();
 
@@ -28,15 +28,13 @@ server.listen(PORT, () =>
 );
 
 server.on('request', (req, res) => {
-  const { method, url /* , headers */ } = req;
+  const { method, url } = req;
   res.setHeader('Content-Type', 'application/json');
 
   if (method === 'GET' && url === '/api/users') {
     res.statusCode = 200;
     res.end(JSON.stringify(users));
-  }
-
-  if (method === 'GET' && url?.startsWith('/api/users/')) {
+  } else if (method === 'GET' && url?.startsWith('/api/users/')) {
     const reqUserId = url.slice(11);
     const user = users.find((user) => user.id === reqUserId);
     if (user) {
@@ -51,9 +49,7 @@ server.on('request', (req, res) => {
         res.end('Invalid user id');
       }
     }
-  }
-
-  if (method === 'DELETE' && url?.startsWith('/api/users/')) {
+  } else if (method === 'DELETE' && url?.startsWith('/api/users/')) {
     const reqUserId = url.slice(11);
     const userIdInArray = users.findIndex((user) => user.id === reqUserId);
     if (userIdInArray >= 0) {
@@ -69,5 +65,8 @@ server.on('request', (req, res) => {
         res.end('User not found');
       }
     }
+  } else {
+    res.statusCode = 404;
+    res.end(`Requested resource doesn't exist`);
   }
 });

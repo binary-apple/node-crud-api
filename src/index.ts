@@ -8,14 +8,7 @@ dotenv.config();
 const PORT = process.env.PORT || 4000;
 const server = http.createServer();
 
-const users: User[] = [
-  {
-    id: uuidv4(),
-    username: 'John Doe',
-    age: 20,
-    hobbies: ['programming'],
-  },
-];
+const users: User[] = [];
 
 server.listen(PORT, () =>
   console.log(`App is listening on url http://localhost:${PORT}`),

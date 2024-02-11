@@ -1,7 +1,7 @@
 import http from 'http';
 import dotenv from 'dotenv';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
-import { User /*, UserData  , validateUserData */ } from 'types';
+import { User, validateUserData } from './types';
 
 dotenv.config();
 
@@ -49,6 +49,30 @@ server.on('request', (req, res) => {
         res.end('Invalid user id');
       }
     }
+  } else if (method === 'POST' && url === '/api/users') {
+    let body = '';
+    req.on('data', (data) => {
+      if (data) {
+        body += data.toString();
+      }
+    });
+    req.on('end', () => {
+      const parsedBody: unknown = JSON.parse(body);
+      if (validateUserData(parsedBody)) {
+        const newUser = {
+          id: uuidv4(),
+          username: parsedBody.username,
+          age: parsedBody.age,
+          hobbies: parsedBody.hobbies,
+        };
+        users.push(newUser);
+        res.statusCode = 201;
+        res.end(JSON.stringify(newUser));
+      } else {
+        res.statusCode = 400;
+        res.end('Request should contain correct required fields');
+      }
+    });
   } else if (method === 'DELETE' && url?.startsWith('/api/users/')) {
     const reqUserId = url.slice(11);
     const userIdInArray = users.findIndex((user) => user.id === reqUserId);

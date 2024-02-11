@@ -7,12 +7,16 @@ export interface User {
 
 export type UserData = Omit<User, 'id'>;
 
-export const validateUserData: (data: unknown) => boolean = (data) => {
+export function validateUserData(data: unknown): data is UserData {
   return (
     !!data &&
     typeof data === 'object' &&
     'username' in data &&
+    typeof data.username === 'string' &&
     'age' in data &&
-    'hobbies' in data
+    typeof data.age === 'number' &&
+    'hobbies' in data &&
+    Array.isArray(data.hobbies) &&
+    data.hobbies.every((el) => typeof el === 'string')
   );
-};
+}

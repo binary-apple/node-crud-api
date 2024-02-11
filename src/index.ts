@@ -32,10 +32,10 @@ server.on('request', (req, res) => {
     } else {
       if (!uuidValidate(reqUserId)) {
         res.statusCode = 400;
-        res.end('Invalid user id');
+        res.end(JSON.stringify({ message: 'Invalid user id' }));
       } else {
         res.statusCode = 404;
-        res.end('Invalid user id');
+        res.end(JSON.stringify({ message: 'Invalid user id' }));
       }
     }
   } else if (method === 'POST' && url === '/api/users') {
@@ -60,7 +60,11 @@ server.on('request', (req, res) => {
         res.end(JSON.stringify(newUser));
       } else {
         res.statusCode = 400;
-        res.end('Request should contain correct required fields');
+        res.end(
+          JSON.stringify({
+            message: 'Request should contain correct required fields',
+          }),
+        );
       }
     });
   } else if (method === 'PUT' && url?.startsWith('/api/users/')) {
@@ -87,16 +91,20 @@ server.on('request', (req, res) => {
           res.end(JSON.stringify(users[userIdInArray]));
         } else {
           res.statusCode = 400;
-          res.end('Request should contain correct required fields');
+          res.end(
+            JSON.stringify({
+              message: 'Request should contain correct required fields',
+            }),
+          );
         }
       });
     } else {
       if (!uuidValidate(reqUserId)) {
         res.statusCode = 400;
-        res.end('Invalid user id');
+        res.end(JSON.stringify({ message: 'Invalid user id' }));
       } else {
         res.statusCode = 404;
-        res.end('User not found');
+        res.end(JSON.stringify({ message: 'User not found' }));
       }
     }
   } else if (method === 'DELETE' && url?.startsWith('/api/users/')) {
@@ -110,15 +118,17 @@ server.on('request', (req, res) => {
     } else {
       if (!uuidValidate(reqUserId)) {
         res.statusCode = 400;
-        res.end('Invalid user id');
+        res.end(JSON.stringify({ message: 'Invalid user id' }));
       } else {
         res.statusCode = 404;
-        res.end('User not found');
+        res.end(JSON.stringify({ message: 'User not found' }));
       }
     }
   } else {
     // all other requests
     res.statusCode = 404;
-    res.end(`Requested resource doesn't exist`);
+    res.end(JSON.stringify({ message: `Requested resource doesn't exist` }));
   }
 });
+
+export default server;

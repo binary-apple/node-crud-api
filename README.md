@@ -46,9 +46,9 @@ To finish program work use ``ctrl + c``
         -  Server answers with `status code` **204** if the record is found and deleted
         -  Server answers with `status code` **400** and corresponding message if `userId` is invalid (not `uuid`)
         -  Server answers with `status code` **404** and corresponding message if record with `id === userId` doesn't exist
-    - All other requests as well as requests to non-existing endpoints (e.g. some-non/existing/resource) are handled corresponding (server answers with status code 404 and corresponding human-friendly message)
+    - All other requests as well as requests to non-existing endpoints (e.g. some-non/existing/resource) are handled corresponding (server answers with status code **404** and corresponding human-friendly message)
     - For correct creating/updating user the request body of **POST** and **PUT** methods must be contain following properties:
         - `username` — user's name (`string`, **required**)
         - `age` — user's age (`number`, **required**)
         - `hobbies` — user's hobbies (`array` of `strings` or empty `array`, **required**)
-    - Errors on the server side that occur during the processing of a request are handled and processed correctly (server answers with status code 500 and corresponding human-friendly message)
+    - Errors on the server side that occur during the processing of a request are handled and processed correctly (server answers with status code **500** and corresponding human-friendly message)

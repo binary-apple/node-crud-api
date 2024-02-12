@@ -65,7 +65,6 @@ describe('Scenario 1', () => {
     // GET api/users/{userId}
     const res = await request(server).get(`/api/users/${currentUserId}`);
     expect(res.statusCode).toEqual(404);
-    console.log(res.body);
     expect(res.body).toEqual({ message: 'Invalid user id' });
   });
 });
@@ -124,5 +123,80 @@ describe('Scenario 2', () => {
     const res = await request(server).delete('/api/users/test');
     expect(res.statusCode).toEqual(400);
     expect(res.body).toEqual({ message: 'Invalid user id' });
+  });
+});
+
+describe('Scenario 3', () => {
+  afterAll(() => {
+    server.close();
+  });
+
+  let currentUserId = '';
+  const newUsersData: UserData[] = [
+    {
+      username: 'Darth Vader',
+      age: 45,
+      hobbies: ['podracing', 'creating robots'],
+    },
+    {
+      username: 'Luke Skywalker',
+      age: 20,
+      hobbies: ['force'],
+    },
+  ];
+
+  test('should return empty array', async () => {
+    // GET api/users
+    const res = await request(server).get('/api/users');
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual([]);
+  });
+
+  test('should return newly created user record', async () => {
+    // POST api/users
+    const res = await request(server).post('/api/users').send(newUsersData[0]);
+    currentUserId = res.body.id;
+    expect(res.statusCode).toEqual(201);
+    expect(res.body).toMatchObject(newUsersData[0]);
+  });
+
+  test('should return newly created user record', async () => {
+    // POST api/users
+    const res = await request(server).post('/api/users').send(newUsersData[1]);
+    expect(res.statusCode).toEqual(201);
+    expect(res.body).toMatchObject(newUsersData[1]);
+  });
+
+  test('should return 2 previously created user records', async () => {
+    // GET api/users
+    const res = await request(server).get('/api/users');
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toMatchObject(newUsersData);
+    expect(res.body.length).toEqual(2);
+  });
+
+  test('should successfully delete first user record', async () => {
+    // DELETE api/users/{userId}
+    const res = await request(server).delete(`/api/users/${currentUserId}`);
+    expect(res.statusCode).toEqual(204);
+    expect((await request(server).get('/api/users')).body).toMatchObject([
+      newUsersData[1],
+    ]);
+  });
+
+  test('should not delete the previously deleted record', async () => {
+    // DELETE api/users/{userId}
+    const res = await request(server).delete(`/api/users/${currentUserId}`);
+    expect(res.statusCode).toEqual(404);
+    expect(res.body).toEqual({ message: 'User not found' });
+  });
+
+  test('should not update the previously deleted record', async () => {
+    // PUT api/users/{userId}
+    const res = await request(server)
+      .put(`/api/users/${currentUserId}`)
+      .send(newUsersData[0]);
+    expect(res.statusCode).toEqual(404);
+    expect(res.body).toEqual({ message: 'User not found' });
   });
 });
